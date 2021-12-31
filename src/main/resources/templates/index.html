@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<!--展示查询出的所有数据-->
+<div id="tab1" style="display: block">
+    <table border="1px">
+        <button id="btn1">新增</button>
+        <tr>
+            <td>编号</td>
+            <td>姓名</td>
+            <td>年龄</td>
+            <td>操作</td>
+        </tr>
+        <tr th:each="user:${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.age}"></td>
+            <td><button th:onclick="'upd('+${user.id}+')'">修改</button><button th:onclick="'del('+${user.id}+')'">删除</button></td>
+        </tr>
+    </table>
+</div>
+
+<!--插入新数据-->
+<div id="tab2" style="display: none">
+    <table>
+        username:<input id="username" type="text"><br>
+        age:<input id="age" type="text"><br>
+        <button id="btn2">提交</button>
+    </table>
+</div>
+
+<!--修改数据-->
+<div id="tab3" style="display: none">
+    <table>
+        id:<input id="id1" type="text" readonly><br>
+        username:<input id="username1" type="text"><br>
+        age:<input id="age1" type="text"><br>
+        <button id="btn3">提交</button>
+    </table>
+</div>
+
+    <script>
+        // 修改数据函数
+        function upd(id) {
+            $.post('/user/findById',{
+                id:id
+            },function (data) {
+                id1.value = data.id;
+                username1.value = data.username;
+                age1.value = data.age;
+                tab1.style.display = 'none';
+                tab3.style.display = 'block';
+            })
+        };
+        // 删除数据函数
+        function del(id) {
+            $.post('/user/deleteById',{
+                id:id
+            },function () {
+                alert("删除成功！");
+                location="/user/findAll";
+            })
+        };
+        $(function () {
+            var tab1 = document.getElementById('tab1');
+            var tab2 = document.getElementById('tab2');
+            $('#btn1').click(function () {
+                tab1.style.display = 'none';
+                tab2.style.display = 'block';
+            });
+            $('#btn2').click(function () {
+                $.post('/user/save',{
+                    username:username.value,
+                    age:age.value
+                },function () {
+                    alert("保存成功！");
+                    location="/user/findAll";
+                })
+            });
+            $('#btn3').click(function () {
+                $.post('/user/update',{
+                    id:id1.value,
+                    username:username1.value,
+                    age:age1.value
+                },function () {
+                    alert("修改成功！");
+                    location="/user/findAll";
+                })
+            });
+        })
+    </script>
+</body>
+</html>
