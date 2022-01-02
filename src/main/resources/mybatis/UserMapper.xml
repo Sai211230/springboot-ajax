@@ -6,6 +6,9 @@
     <select id="findAll" resultType="User">
         select * from user
     </select>
+    <select id="findGradeByStudentName" parameterType="java.lang.String" resultType="Grade">
+        select * from grade where student_name like concat('%',#{student_name},'%')
+    </select>
     <select id="findById" parameterType="java.lang.Integer" resultType="User">
         select * from user where id=#{id}
     </select>
@@ -17,5 +20,28 @@
     </update>
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from user where id=#{id}
+    </delete>
+    <select id="findByUserName" parameterType="User" resultType="User">
+        select * from user where username = #{username}
+    </select>
+
+    <select id="login" parameterType="User" resultType="User">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+    <select id="findAllGrade" resultType="Grade">
+        select * from grade
+    </select>
+
+    <select id="findGradeById" parameterType="java.lang.Integer" resultType="Grade">
+        select * from grade where id=#{id}
+    </select>
+    <insert id="saveGrade" parameterType="Grade">
+        insert into grade(student_name,yw,sx,yy,zyk) values (#{student_name},#{yw},#{sx},#{yy},#{zyk})
+    </insert>
+    <update id="updateGrade" parameterType="Grade">
+        update grade set student_name=#{student_name},yw=#{yw},sx=#{sx},yy=#{yy},zyk=#{zyk} where id=#{id}
+    </update>
+    <delete id="deleteGradeById" parameterType="java.lang.Integer">
+        delete from grade where id=#{id}
     </delete>
 </mapper>

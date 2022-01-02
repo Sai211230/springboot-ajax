@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Grades</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="tab1" style="display: block">
+    <button id="btn1">新增</button><button onclick="location='/user/findAll'">用户管理</button><button onclick="location='/user/toLogin'">注销</button>
+    <br>
+    <input id="gradeSearch" type="text" placeholder="请输入学生姓名"><button onclick="find()">查询</button><button onclick="location='/user/toGrade'">返回</button>
+    <table border="1px">
+        <tr>
+            <td>序号</td>
+            <td>学生姓名</td>
+            <td>语文</td>
+            <td>数学</td>
+            <td>英语</td>
+            <td>专业课</td>
+            <td>操作</td>
+        </tr>
+        <tr th:each="grade:${gradeList}">
+            <td th:text="${grade.id}"></td>
+            <td th:text="${grade.student_name}"></td>
+            <td th:text="${grade.yw}"></td>
+            <td th:text="${grade.sx}"></td>
+            <td th:text="${grade.yy}"></td>
+            <td th:text="${grade.zyk}"></td>
+            <td><button th:onclick="'upd('+${grade.id}+')'">修改</button><button th:onclick="'del('+${grade.id}+')'">删除</button></td>
+        </tr>
+    </table>
+</div>
+<!--插入新数据-->
+<div id="tab2" style="display: none">
+    <button onclick="location='/user/toGrade'">返回</button><br>
+    <table>
+        学生姓名:<input id="student_name" type="text"><br>
+        语文:<input id="yw" type="text"><br>
+        数学:<input id="sx" type="text"><br>
+        英语:<input id="yy" type="text"><br>
+        专业课:<input id="zyk" type="text"><br>
+        <button id="btn2">提交</button>
+    </table>
+</div>
+
+<!--修改数据-->
+<div id="tab3" style="display: none">
+    <button onclick="location='/user/toGrade'">返回</button><br>
+    <table>
+        序号:<input id="id1" type="text" readonly><br>
+        学生姓名:<input id="student_name1" type="text"><br>
+        语文:<input id="yw1" type="text"><br>
+        数学:<input id="sx1" type="text"><br>
+        英语:<input id="yy1" type="text"><br>
+        专业课:<input id="zyk1" type="text"><br>
+        <button id="btn3">提交</button>
+    </table>
+</div>
+
+<script>
+    //查询函数
+    function find() {
+        $.get('/user/findGradeByStudentName',{
+            student_name:gradeSearch.value
+        })
+    };
+    // 修改数据函数
+    function upd(id) {
+        $.post('/user/findGradeById',{
+            id:id
+        },function (data) {
+            id1.value = data.id;
+            student_name1.value = data.student_name;
+            yw1.value = data.yw;
+            sx1.value = data.sx;
+            yy1.value = data.yy;
+            zyk1.value = data.zyk;
+            tab1.style.display = 'none';
+            tab3.style.display = 'block';
+        })
+    };
+    // 删除数据函数
+    function del(id) {
+        $.post('/user/deleteGradeById',{
+            id:id
+        },function () {
+            alert("删除成功！");
+            location="/user/toGrade";
+        })
+    };
+    $(function () {
+        var tab1 = document.getElementById('tab1');
+        var tab2 = document.getElementById('tab2');
+        $('#btn1').click(function () {
+            tab1.style.display = 'none';
+            tab2.style.display = 'block';
+        });
+        $('#btn2').click(function () {
+            $.post('/user/saveGrade',{
+                student_name:student_name.value,
+                yw:yw.value,
+                sx:sx.value,
+                yy:yy.value,
+                zyk:zyk.value
+            },function () {
+                alert("保存成功！");
+                location="/user/toGrade";
+            })
+        });
+        $('#btn3').click(function () {
+            $.post('/user/updateGrade',{
+                id:id1.value,
+                student_name:student_name1.value,
+                yw:yw1.value,
+                sx:sx1.value,
+                yy:yy1.value,
+                zyk:zyk1.value
+            },function () {
+                alert("修改成功！");
+                location="/user/toGrade";
+            })
+        });
+    })
+</script>
+</body>
+</html>

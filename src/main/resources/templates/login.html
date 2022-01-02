@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div>
+    用户名：<input id="username" type="text"><br>
+    密码：<input id="password" type="password"><br>
+    <input id="login" type="button" value="登录"><br>
+    <input onclick="location='/user/toReg'" type="button" value="注册"><br>
+</div>
+<script>
+    $(function () {
+        $('#login').click(function () {
+            $.post('/user/login',{
+                username:username.value,
+                password:password.value
+            },function (data) {
+               if (data.username == username.value&&data.password == password.value){
+                   alert('登陆成功！');
+                   location = "/user/toGrade";
+               } else{
+                   alert('用户名或密码错误！')
+               }
+            })
+        });
+    })
+</script>
+</body>
+</html>

@@ -3,12 +3,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>User</title>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 <body>
 <!--展示查询出的所有数据-->
 <div id="tab1" style="display: block">
+    <button onclick="location='/user/toGrade'">返回</button><button onclick="location='/user/toLogin'">注销</button><br>
     <table border="1px">
         <button id="btn1">新增</button>
         <tr>
@@ -28,19 +29,21 @@
 
 <!--插入新数据-->
 <div id="tab2" style="display: none">
+    <button onclick="location='/user/findAll'">返回</button><br>
     <table>
-        username:<input id="username" type="text"><br>
-        age:<input id="password" type="text"><br>
+        用户名:<input id="username" type="text"><br>
+        密码:<input id="password" type="text"><br>
         <button id="btn2">提交</button>
     </table>
 </div>
 
 <!--修改数据-->
 <div id="tab3" style="display: none">
+    <button onclick="location='/user/findAll'">返回</button><br>
     <table>
-        id:<input id="id1" type="text" readonly><br>
-        username:<input id="username1" type="text"><br>
-        password:<input id="password1" type="text"><br>
+        编号:<input id="id1" type="text" readonly><br>
+        用户名:<input id="username1" type="text"><br>
+        密码:<input id="password1" type="text"><br>
         <button id="btn3">提交</button>
     </table>
 </div>
@@ -77,7 +80,7 @@
             $('#btn2').click(function () {
                 $.post('/user/save',{
                     username:username.value,
-                    password:age.password
+                    password:password.value
                 },function () {
                     alert("保存成功！");
                     location="/user/findAll";

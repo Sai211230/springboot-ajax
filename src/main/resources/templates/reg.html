@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>reg</title>
+</head>
+<body>
+用户名：<input id="username" type="text"><br>
+密码：<input id="password" type="password"><br>
+<input id="reg" type="button" value="提交"><br>
+<script>
+    $(function () {
+        $('#reg').click(function () {
+            $.get('/user/findByUserName',{
+                username:username.value,
+                password:password.value
+            },function (data) {
+                if (data.username == username.value){
+                    alert('用户名已存在！');
+                } else{
+                    $.post('/user/save',{
+                        username:username.value,
+                        password:password.value
+                    },function () {
+                        alert("注册成功！");
+                        location="/user/toLogin";
+                    })
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>
