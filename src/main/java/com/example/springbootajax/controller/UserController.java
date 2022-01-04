@@ -77,7 +77,7 @@ public class UserController {
     public Integer login(User user,String inputVcode, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String Vcode = (String) session.getAttribute("Vcode");
-        if (inputVcode != null&& Vcode.equalsIgnoreCase(inputVcode)){
+        if (!inputVcode.isEmpty() && Vcode.equalsIgnoreCase(inputVcode)){
             User u = userService.login(user);
             if (u != null && u.getUsername().equals(user.getUsername())&&u.getPassword().equals(user.getPassword())){
                 session.setAttribute("user",u);
