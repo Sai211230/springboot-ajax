@@ -9,6 +9,8 @@
 <div>
     用户名：<input id="username" type="text"><br>
     密码：<input id="password" type="password"><br>
+    验证码：<input id="inputVcode" type="text"><img src="/user/createCode" /><br>
+
     <input id="login" type="button" value="登录"><br>
     <input onclick="location='/user/toReg'" type="button" value="注册"><br>
 </div>
@@ -17,12 +19,15 @@
         $('#login').click(function () {
             $.post('/user/login',{
                 username:username.value,
-                password:password.value
+                password:password.value,
+                inputVcode:inputVcode.value
             },function (data) {
-               if (data.username == username.value&&data.password == password.value){
+               if (data == 1){
                    alert('登陆成功！');
                    location = "/user/toGrade";
-               } else{
+               } else if (data == 2) {
+                   alert('验证码错误！')
+               }else{
                    alert('用户名或密码错误！')
                }
             })

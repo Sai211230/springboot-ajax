@@ -4,13 +4,16 @@ package com.example.springbootajax.controller;
 import com.example.springbootajax.pojo.Grade;
 import com.example.springbootajax.pojo.User;
 import com.example.springbootajax.service.impl.UserServiceImpl;
+import com.wf.captcha.SpecCaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,10 +24,18 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+    //先获取session，如果session中存在user的话说明用户已登录，如果不存在则跳转至登录页面
     @GetMapping("/findAll")
-    public ModelAndView findAll(){
-        ModelAndView modelAndView = new ModelAndView("user");
-        modelAndView.addObject("users",userService.findAll());
+    public ModelAndView findAll(HttpServletRequest request){
+        ModelAndView modelAndView = null;
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user != null){
+            modelAndView = new ModelAndView("user");
+            modelAndView.addObject("users",userService.findAll());
+        }else{
+            modelAndView = new ModelAndView("login");
+        }
         return modelAndView;
     }
     @GetMapping("/findGradeByStudentName")
@@ -61,9 +72,35 @@ public class UserController {
         return modelAndView;
     }
 
+    //判断是否有此用户，如果有则把用户信息存入session中
     @PostMapping("/login")
-    public User login(User user) {
-        return userService.login(user);
+    public Integer login(User user,String inputVcode, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String Vcode = (String) session.getAttribute("Vcode");
+        if (inputVcode != null&& Vcode.equalsIgnoreCase(inputVcode)){
+            User u = userService.login(user);
+            if (u != null && u.getUsername().equals(user.getUsername())&&u.getPassword().equals(user.getPassword())){
+                session.setAttribute("user",u);
+                return 1;
+            }else{
+                return 0;
+            }
+        }else{
+            return 2;
+        }
+
+    }
+    @GetMapping("/createCode")
+    public void createCode(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        SpecCaptcha captcha = new SpecCaptcha(130, 48);
+        // 获取验证码的字符串
+        String text = captcha.text();
+        // 获取验证码的字符数组
+        char[] chars = captcha.textChar();
+        //将获取的验证码的值存入session中
+        HttpSession session = request.getSession();
+        session.setAttribute("Vcode",text);
+        captcha.out(response.getOutputStream());
     }
 
     @GetMapping("/toGrade")
